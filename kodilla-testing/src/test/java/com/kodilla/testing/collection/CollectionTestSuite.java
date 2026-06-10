@@ -6,12 +6,12 @@ import java.util.*;
 @DisplayName("Collection Test Suite")
 class CollectionTestSuite {
     @BeforeEach
-    public void beforeAll() {
+    public void beforeEach() {
         System.out.println("Start test list");
     }
 
     @AfterEach
-    public void afterAll() {
+    public void afterEach() {
         System.out.println("End test list");
     }
 
