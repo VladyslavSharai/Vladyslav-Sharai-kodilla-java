@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 public class ShapeCollectorTestSuite {
     @BeforeAll
     static void beforeAll() {
+
         System.out.println("Before All");
     }
 
