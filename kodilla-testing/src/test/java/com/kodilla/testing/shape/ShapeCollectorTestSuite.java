@@ -48,11 +48,19 @@ public class ShapeCollectorTestSuite {
         void getFigure() {
             ShapeCollector shapeCollector = new ShapeCollector();
             Circle circle = new Circle(4);
+            Square square = new Square(4);
+            Triangle triangle = new Triangle(4, 4);
             shapeCollector.addFigure(circle);
+            shapeCollector.addFigure(square);
+            shapeCollector.addFigure(triangle);
 
-            Shape result = shapeCollector.getFigure(0);
+            Shape resultCircle = shapeCollector.getFigure(0);
+            Shape resultSquare = shapeCollector.getFigure(1);
+            Shape resultTriangle = shapeCollector.getFigure(2);
 
-            Assertions.assertEquals(circle, result);
+            Assertions.assertEquals(circle, resultCircle);
+            Assertions.assertEquals(square, resultSquare);
+            Assertions.assertEquals(triangle, resultTriangle);
         }
 
         @Test
@@ -69,6 +77,32 @@ public class ShapeCollectorTestSuite {
             String expectedResult = "Square, Circle, Triangle";
 
             Assertions.assertEquals(expectedResult, result);
+        }
+
+        @Test
+        void removeFigureNotPresentInCollection(){
+            ShapeCollector shapeCollector = new ShapeCollector();
+            Circle circle = new Circle(4);
+            Triangle triangle = new Triangle(4, 4);
+            shapeCollector.addFigure(circle);
+
+            boolean result =  shapeCollector.removeFigure(triangle);
+
+            Assertions.assertFalse(result);
+            Assertions.assertEquals(circle, shapeCollector.getFigure(0));
+        }
+
+        @Test
+        void showFiguresWithNotIndex(){
+            ShapeCollector shapeCollector = new ShapeCollector();
+            Square square = new Square(4);
+            shapeCollector.addFigure(square);
+
+            Shape negativeIndex = shapeCollector.getFigure(-1);
+            Shape inativeIndex = shapeCollector.getFigure(1);
+
+            Assertions.assertNull(negativeIndex);
+            Assertions.assertNull(inativeIndex);
         }
     }
 }
