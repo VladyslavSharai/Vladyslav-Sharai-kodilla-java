@@ -19,10 +19,12 @@ public class WeatherForecastTestSuite {
     @Mock
     private Temperatures temperaturesMock;
     private Map<String, Double> temperaturesMap;
+    private WeatherForecast weatherForecast;
 
     @BeforeEach
     void setUp() {
         temperaturesMap = new HashMap<>();
+        weatherForecast = new WeatherForecast(temperaturesMock);
 
         temperaturesMap.put("Rzeszow", 25.0);
         temperaturesMap.put("Krakow", 26.0);
@@ -33,8 +35,6 @@ public class WeatherForecastTestSuite {
     @Test
     void testCalculateForecastWithMock() {
         when(temperaturesMock.getTemperatures()).thenReturn(temperaturesMap);
-        WeatherForecast weatherForecast = new WeatherForecast(temperaturesMock);
-
 
         int quantityOfSensors = weatherForecast.calculateForecast().size();
 
@@ -44,7 +44,6 @@ public class WeatherForecastTestSuite {
     @Test
     void testCalculateAverageTemperatures(){
         when(temperaturesMock.getTemperatures()).thenReturn(temperaturesMap);
-        WeatherForecast weatherForecast = new WeatherForecast(temperaturesMock);
 
         double result = weatherForecast.calculateAverageTemperatures();
 
@@ -52,12 +51,38 @@ public class WeatherForecastTestSuite {
     }
 
     @Test
-    void testCalculateMedianeTemperatures(){
+    void testCalculatePairedMedianeTemperatures(){
         when(temperaturesMock.getTemperatures()).thenReturn(temperaturesMap);
-        WeatherForecast weatherForecast = new WeatherForecast(temperaturesMock);
 
         double result = weatherForecast.calculateMedianeTemperatures();
 
         Assertions.assertEquals(25.0, result);
+    }
+
+    @Test
+    void testCalculateUnairedMedianeTemperatures(){
+        Map<String, Double> temperaturesMap = new HashMap<>();
+        temperaturesMap.put("Rzeszow", 25.0);
+        temperaturesMap.put("Krakow", 26.0);
+        temperaturesMap.put("Warszawa", 24.0);
+        temperaturesMap.put("Szczecin", 25.0);
+        temperaturesMap.put("Poznań", 27.0);
+        when(temperaturesMock.getTemperatures()).thenReturn(temperaturesMap);
+
+        double result = weatherForecast.calculateMedianeTemperatures();
+
+        Assertions.assertEquals(25.0, result);
+    }
+
+    @Test
+    void testCalculateAverageAndMedianWhenMapIsEmpty(){
+        Map<String, Double> emptyTemperaturesMap = new HashMap<>();
+        when(temperaturesMock.getTemperatures()).thenReturn(emptyTemperaturesMap);
+
+        double resultMediane = weatherForecast.calculateMedianeTemperatures();
+        double resultAverage = weatherForecast.calculateAverageTemperatures();
+
+        Assertions.assertEquals(0.0, resultMediane);
+        Assertions.assertEquals(0.0, resultAverage);
     }
 }
