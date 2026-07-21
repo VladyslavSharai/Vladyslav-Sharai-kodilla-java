@@ -1,6 +1,9 @@
 package com.kodilla.testing.library;
 
 import java.util.*;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -18,6 +21,7 @@ import static org.mockito.Mockito.*;
 class BookDirectoryTestSuite {
     @Mock
     private LibraryDatabase libraryDatabaseMock;
+    private BookLibrary bookLibrary;
 
     private List<Book> generateListOfNBooks(int booksQuantity){
         List<Book> resultList = new ArrayList<>();
@@ -28,9 +32,13 @@ class BookDirectoryTestSuite {
         return resultList;
     }
 
+    @BeforeEach
+    void setUp() {
+        bookLibrary = new BookLibrary(libraryDatabaseMock);
+    }
+
     @Test
     void testListBooksWithConditionsReturnList() {
-        BookLibrary bookLibrary = new BookLibrary(libraryDatabaseMock);
         List<Book> resultListOfBooks  = new ArrayList<>();
         Book book1 = new Book("Secrets of Alamo", "John Smith", 2008);                   // [5]
         Book book2 = new Book("Secretaries and Directors", "Dilbert Michigan", 2012);    // [6]
@@ -50,7 +58,6 @@ class BookDirectoryTestSuite {
 
     @Test
     void testListBooksWithConditionMoreThan20() {
-        BookLibrary bookLibrary = new BookLibrary(libraryDatabaseMock);
         List<Book> resultListOfBooks  = new ArrayList<>();
         List<Book> resultList15fBooks = generateListOfNBooks(15);
         List<Book> resultList40fBooks = generateListOfNBooks(40);
@@ -69,7 +76,6 @@ class BookDirectoryTestSuite {
 
     @Test
     void testListBooksWithConditionFragmentShorterThan3() {
-        BookLibrary bookLibrary = new BookLibrary(libraryDatabaseMock);
 
         List<Book> theListOfBooks10 = bookLibrary.listBooksWithCondition("An");
 
@@ -79,7 +85,6 @@ class BookDirectoryTestSuite {
 
     @Test
     void testListBooksInHandsOf0Books(){
-        BookLibrary bookLibrary = new BookLibrary(libraryDatabaseMock);
         LibraryUser libraryUser = new LibraryUser("Vladyslav", "Sharai", "8747474747");
         List<Book> theListOfBooks = new ArrayList<>();
         when(libraryDatabaseMock.listBooksInHandsOf(libraryUser)).thenReturn(theListOfBooks);
@@ -92,7 +97,6 @@ class BookDirectoryTestSuite {
 
     @Test
     void testListBooksInHandsOf1Books(){
-        BookLibrary bookLibrary = new BookLibrary(libraryDatabaseMock);
         LibraryUser libraryUser = new LibraryUser("Vladyslav", "Sharai", "8747474747");
         List<Book> theListOf1Book = new ArrayList<>();
         Book book1 = new Book("Title1", "Author1", 1970 + 1);
@@ -107,7 +111,6 @@ class BookDirectoryTestSuite {
 
     @Test
     void testListBooksInHandsOf5Books(){
-        BookLibrary bookLibrary = new BookLibrary(libraryDatabaseMock);
         LibraryUser libraryUser = new LibraryUser("Vlad", "Sharai", "8747474747");
         List<Book> theListOf5Books = generateListOfNBooks(5);
         when(libraryDatabaseMock.listBooksInHandsOf(libraryUser)).thenReturn(theListOf5Books);
@@ -115,5 +118,19 @@ class BookDirectoryTestSuite {
         List<Book> ResultTheListOf5Books = bookLibrary.listBooksInHandsOf(libraryUser);
 
         assertEquals(5, ResultTheListOf5Books.size());
+    }
+
+    @Test
+    void testListBooksInHandsOfShouldCallDatabaseWithCorrectUser(){
+        LibraryUser user = new LibraryUser("Vlad", "Sharai", "8747474747");
+        List <Book> expectedBooks = generateListOfNBooks(5);
+        when(libraryDatabaseMock.listBooksInHandsOf(user)).thenReturn(expectedBooks);
+
+        List<Book> resultList = bookLibrary.listBooksInHandsOf(user);
+
+        Assertions.assertEquals(expectedBooks, resultList);
+        Assertions.assertEquals(expectedBooks.size(), resultList.size());
+        verify(libraryDatabaseMock, times(1)).listBooksInHandsOf(user);
+
     }
 }
