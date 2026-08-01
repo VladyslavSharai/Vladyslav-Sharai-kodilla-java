@@ -1,13 +1,26 @@
 package com.kodilla.stream;
 
-import com.kodilla.stream.beautifier.PoemBeautifier;
-import com.kodilla.stream.iterate.NumbersGenerator;
+import com.kodilla.stream.forumuser.Forum;
+import com.kodilla.stream.forumuser.ForumUser;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class StreamMain {
 
     public static void main(String[] args) {
-        System.out.println("Using Stream to generate even numbers from 1 to 20");
-        NumbersGenerator.generateEven(20);
+        Forum forum = new Forum();
+
+        Map<Integer, ForumUser> resultListUser = forum.getUserList().stream()
+                .filter(user -> user.getSex() == 'M')
+                .filter(user -> user.getBirthday().isBefore(LocalDate.now().minusYears(20)))
+                .filter(user -> user.getPosts() >= 1)
+                .collect(Collectors.toMap(ForumUser::getId, user -> user));
+
+        resultListUser.entrySet().stream()
+                .map(entry -> entry.getKey() + ": " + entry.getValue())                   // [3]
+                .forEach(System.out::println);
+
     }
 }
