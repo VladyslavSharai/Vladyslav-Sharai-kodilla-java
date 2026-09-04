@@ -28,3 +28,9 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+subprojects {
+    tasks.matching { it.name == 'bootJar' }.configureEach {
+        enabled = false
+    }
+}
+
